@@ -2,11 +2,11 @@ import torch
 import open3d as o3d
 
 from extensions.chamfer_distance.chamfer_distance import ChamferDistance
-from extensions.earth_movers_distance.emd import EarthMoverDistance
+# from extensions.earth_movers_distance.emd import EarthMoverDistance
 
 
 CD = ChamferDistance()
-EMD = EarthMoverDistance()
+# EMD = EarthMoverDistance()
 
 
 def l2_cd(pcs1, pcs2):
@@ -23,9 +23,9 @@ def l1_cd(pcs1, pcs2):
     return torch.sum(dist1 + dist2) / 2
 
 
-def emd(pcs1, pcs2):
-    dists = EMD(pcs1, pcs2)
-    return torch.sum(dists)
+# def emd(pcs1, pcs2):
+#     dists = EMD(pcs1, pcs2)
+#     return torch.sum(dists)
 
 
 def f_score(pred, gt, th=0.01):

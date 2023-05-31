@@ -8,8 +8,10 @@ import torch.utils.data as Data
 
 from models import PCN
 from dataset import ShapeNet
+from dataset import Oring
 from visualization import plot_pcd_one_view
-from metrics.metric import l1_cd, l2_cd, emd, f_score
+# from metrics.metric import l1_cd, l2_cd, emd, f_score
+from metrics.metric import l1_cd, l2_cd, f_score
 
 
 CATEGORIES_PCN       = ['airplane', 'cabinet', 'car', 'chair', 'lamp', 'sofa', 'table', 'vessel']
@@ -36,7 +38,8 @@ def test_single_category(category, model, params, save=True):
         make_dir(image_dir)
         make_dir(output_dir)
 
-    test_dataset = ShapeNet('/media/server/new/datasets/PCN', 'test_novel' if params.novel else 'test', category)
+    # test_dataset = ShapeNet('/media/server/new/datasets/PCN', 'test_novel' if params.novel else 'test', category)
+    test_dataset = Oring('data/ORING', 'test_novel' if params.novel else 'test', category)
     test_dataloader = Data.DataLoader(test_dataset, batch_size=params.batch_size, shuffle=False)
 
     index = 1
@@ -120,8 +123,11 @@ def test_emd(params):
     print(params.exp_name)
 
     # load pretrained model
-    model = PCN(16384, 1024, 4).to(params.device)
+    model = PCN(16384, 1024, 4).to(params.device)  # Bong JH
     model.load_state_dict(torch.load(params.ckpt_path))
+    # partial_xyz=env.getpartial_xyz()
+    # z = model.get_latent(partial_xyz)
+
     model.eval()
 
     print('\033[33m{:20s}{:20s}\033[0m'.format('Category', 'EMD(1e-3)'))
@@ -151,7 +157,7 @@ if __name__ == '__main__':
     parser.add_argument('--exp_name', type=str, help='Tag of experiment')
     parser.add_argument('--result_dir', type=str, default='results', help='Results directory')
     parser.add_argument('--ckpt_path', type=str, help='The path of pretrained model.')
-    parser.add_argument('--category', type=str, default='all', help='Category of point clouds')
+    parser.add_argument('--category', type=str, default='oring', help='Category of point clouds')
     parser.add_argument('--batch_size', type=int, default=1, help='Batch size for data loader')
     parser.add_argument('--num_workers', type=int, default=6, help='Num workers for data loader')
     parser.add_argument('--device', type=str, default='cuda:0', help='Device for testing')

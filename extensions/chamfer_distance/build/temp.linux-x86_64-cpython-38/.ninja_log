@@ -1,0 +1,4 @@
+# ninja log v5
+0	9949	1685115612843809135	/home/bong/Model/pcn/extensions/chamfer_distance/build/temp.linux-x86_64-cpython-38/chamfer_cuda.o	f8be5025886c719e
+1	4826	1685526473940262478	/home/bong/Model/pcn/extensions/chamfer_distance/build/temp.linux-x86_64-cpython-38/chamfer3D.o	f7e5ded712b90b0f
+1	10298	1685526479412065053	/home/bong/Model/pcn/extensions/chamfer_distance/build/temp.linux-x86_64-cpython-38/chamfer_cuda.o	b62d1aa8e1d3d21c

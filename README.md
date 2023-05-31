@@ -9,9 +9,10 @@ This is implementation of PCN——Point Completion Network in pytorch. PCN is a
 ## Environment
 
 * Ubuntu 18.04 LTS
-* Python 3.7.9
-* PyTorch 1.7.0
-* CUDA 10.1.243
+* Python 3.7.9   # 3.8
+* PyTorch 1.7.0  # 1.13
+* CUDA 10.1.243  # 11.7
+
 
 ## Prerequisite
 

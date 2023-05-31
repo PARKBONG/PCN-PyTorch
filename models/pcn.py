@@ -69,7 +69,7 @@ class PCN(nn.Module):
         feature_global = torch.max(feature, dim=2, keepdim=True)[0]                          # (B,  256, 1)
         feature = torch.cat([feature_global.expand(-1, -1, N), feature], dim=1)              # (B,  512, N)
         feature = self.second_conv(feature)                                                  # (B, 1024, N)
-        feature_global = torch.max(feature,dim=2,keepdim=False)[0]                           # (B, 1024)
+        feature_global = torch.max(feature, dim=2 ,keepdim=False)[0]                           # (B, 1024)
         
         # decoder
         coarse = self.mlp(feature_global).reshape(-1, self.num_coarse, 3)                    # (B, num_coarse, 3), coarse point cloud
@@ -85,3 +85,15 @@ class PCN(nn.Module):
         fine = self.final_conv(feat) + point_feat                                            # (B, 3, num_fine), fine point cloud
 
         return coarse.contiguous(), fine.transpose(1, 2).contiguous()
+    
+    def get_latent(self, xyz):
+        B, N, _ = xyz.shape
+        
+        # encoder
+        feature = self.first_conv(xyz.transpose(2, 1))                                       # (B,  256, N)
+        feature_global = torch.max(feature, dim=2, keepdim=True)[0]                          # (B,  256, 1)
+        feature = torch.cat([feature_global.expand(-1, -1, N), feature], dim=1)              # (B,  512, N)
+        feature = self.second_conv(feature)                                                  # (B, 1024, N)
+        feature_global = torch.max(feature,dim=2,keepdim=False)[0]                           # (B, 1024)
+        
+        return feature_global

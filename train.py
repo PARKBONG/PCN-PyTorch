@@ -10,9 +10,11 @@ from torch.utils.data.dataloader import DataLoader
 from tensorboardX import SummaryWriter
 
 from dataset import ShapeNet
+from dataset import Oring
 from models import PCN
 from metrics.metric import l1_cd
-from metrics.loss import cd_loss_L1, emd_loss
+from metrics.loss import cd_loss_L1
+# from metrics.loss import cd_loss_L1#emd_loss
 from visualization import plot_pcd_one_view
 
 
@@ -62,14 +64,17 @@ def train(params):
 
     log(log_fd, 'Loading Data...')
 
-    train_dataset = ShapeNet('data/PCN', 'train', params.category)
-    val_dataset = ShapeNet('data/PCN', 'valid', params.category)
+    train_dataset = Oring('data/ORING', 'train', params.category) # JHBong
+    val_dataset = Oring('data/ORING', 'valid', params.category)
+    # train_dataset = ShapeNet('data/PCN', 'train', params.category)
+    # val_dataset = ShapeNet('data/PCN', 'valid', params.category)
 
     train_dataloader = DataLoader(train_dataset, batch_size=params.batch_size, shuffle=True, num_workers=params.num_workers)
     val_dataloader = DataLoader(val_dataset, batch_size=params.batch_size, shuffle=False, num_workers=params.num_workers)
     log(log_fd, "Dataset loaded!")
 
     # model
+    # model = PCN(num_dense=1024, latent_dim=64, grid_size=4).to(params.device)
     model = PCN(num_dense=16384, latent_dim=1024, grid_size=4).to(params.device)
 
     # optimizer
