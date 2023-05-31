@@ -39,10 +39,10 @@ oring_file_dict = {"005_03" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4:
                    }
 
 # oring_list = ["005_03", "005_05", "005_07", "01_03", "01_05", "01_07", "015_03", "015_05", "015_07"]
-oring_list = ["005_03", "005_05", "005_07", "01_03", "01_05", "015_03", "015_05", "015_07"]
+# oring_list = ["005_03", "005_05", "005_07", "01_03", "01_05", "015_03", "015_05", "015_07"]
+oring_list = list(oring_file_dict.keys())
 
-model_id_train = []
-model_id_valid
+
 class Oring(data.Dataset):
     """
     ShapeNet dataset in "PCN: Point Completion Network". It contains 28974 training
@@ -76,25 +76,27 @@ class Oring(data.Dataset):
 
         if self.split == 'train':
             for oring in oring_list:
-                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                for fileindex in range(1, oring_file_dict[oring]["filemax_index"]+1):
                     path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
-                    for model_id in range(1, oring_file_dict[oring][fileindex]+1) if (model_id % 4):
-                        partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
-                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
+                    for model_id in range(1, oring_file_dict[oring][fileindex]+1):
+                        if (model_id % 4):
+                            partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
+                            complete_paths.append(os.path.join(path, 'gt_data_xyzn', '{}.xyzn'.format(model_id)))
         elif self.split == 'valid':
             for oring in oring_list:
-                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                for fileindex in range(1, oring_file_dict[oring]["filemax_index"]+1):
                     path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
-                    for model_id in range(1, oring_file_dict[oring][fileindex]+1) if not(model_id % 4):
-                        partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
-                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
+                    for model_id in range(1, oring_file_dict[oring][fileindex]+1):
+                        if not (model_id % 4):
+                            partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
+                            complete_paths.append(os.path.join(path, 'gt_data_xyzn', '{}.xyzn'.format(model_id)))
         elif self.split == 'test':
             for oring in oring_list:
-                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                for fileindex in range(1, oring_file_dict[oring]["filemax_index"]+1):
                     path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
                     for model_id in range(TEST_START, TEST_END+1):
                         partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
-                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
+                        complete_paths.append(os.path.join(path, 'gt_data_xyzn', '{}.xyzn'.format(model_id)))
         else:
             raise NotImplementedError
 
