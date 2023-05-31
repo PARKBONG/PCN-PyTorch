@@ -16,6 +16,33 @@ VALID_END = 299
 TRAIN_START = 300
 TRAIN_END = 1998
 
+# oring_file_dict = {"005_03" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "005_05" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "005_07" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "01_03"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "01_05"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "01_07"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+#                    "015_03" : {"filemax_index": 7, 1:2000, 2:2000, 3:2000, 4:1000, 5: 1000, 6: 1000, 7: 1000},
+#                    "015_05" : {"filemax_index": 7, 1:2000, 2:2000, 3:2000, 4:1000, 5: 1000, 6: 1000, 7: 1000},
+#                    "015_07" : {"filemax_index": 8, 1:2000, 2:2000, 3:1000, 4:1000, 5: 1000, 6: 1000, 7: 1000, 8: 1000},
+#                    }
+
+oring_file_dict = {"005_03" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+                   "005_05" : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+                   "005_07" : {"filemax_index": 1, 1: 2000},
+                   "01_03"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+                   "01_05"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+                #    "01_07"  : {"filemax_index": 5, 1: 2000, 2: 2000, 3: 2000, 4: 2000, 5: 2000},
+                   "015_03" : {"filemax_index": 3, 1:2000, 2:2000, 3:2000},
+                   "015_05" : {"filemax_index": 7, 1:2000, 2:2000, 3:2000, 4:1000, 5: 1000, 6: 1000, 7: 1000},
+                   "015_07" : {"filemax_index": 8, 1:2000, 2:2000, 3:1000, 4:1000, 5: 1000, 6: 1000, 7: 1000, 8: 1000},
+                   }
+
+# oring_list = ["005_03", "005_05", "005_07", "01_03", "01_05", "01_07", "015_03", "015_05", "015_07"]
+oring_list = ["005_03", "005_05", "005_07", "01_03", "01_05", "015_03", "015_05", "015_07"]
+
+model_id_train = []
+model_id_valid
 class Oring(data.Dataset):
     """
     ShapeNet dataset in "PCN: Point Completion Network". It contains 28974 training
@@ -25,8 +52,7 @@ class Oring(data.Dataset):
     
     def __init__(self, dataroot="data/ORING", split="train", category=None):
         assert split in ['train', 'valid', 'test', 'test_novel'], "split error value!"
-
-
+    
         self.dataroot = dataroot
         self.split = split
         self.category = category
@@ -49,17 +75,26 @@ class Oring(data.Dataset):
         partial_paths, complete_paths = list(), list()
 
         if self.split == 'train':
-            for model_id in range(TRAIN_START, TRAIN_END+1):
-                partial_paths.append(os.path.join(self.dataroot, 'partial', '{}.npy'.format(model_id)))
-                complete_paths.append(os.path.join(self.dataroot, 'complete', '{}.xyz'.format(model_id)))
+            for oring in oring_list:
+                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                    path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
+                    for model_id in range(1, oring_file_dict[oring][fileindex]+1) if (model_id % 4):
+                        partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
+                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
         elif self.split == 'valid':
-            for model_id in range(VALID_START, VALID_END+1):
-                partial_paths.append(os.path.join(self.dataroot, 'partial', '{}.npy'.format(model_id)))
-                complete_paths.append(os.path.join(self.dataroot, 'complete', '{}.xyz'.format(model_id)))
+            for oring in oring_list:
+                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                    path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
+                    for model_id in range(1, oring_file_dict[oring][fileindex]+1) if not(model_id % 4):
+                        partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
+                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
         elif self.split == 'test':
-            for model_id in range(TEST_START, TEST_END+1):
-                partial_paths.append(os.path.join(self.dataroot, 'partial', '{}.npy'.format(model_id)))
-                complete_paths.append(os.path.join(self.dataroot, 'complete', '{}.xyz'.format(model_id)))
+            for oring in oring_list:
+                for fileindex in range(1, oring_file_dict[oring]["filemex_index"]+1):
+                    path = f"{self.dataroot}/{oring}/{oring}_{fileindex}"
+                    for model_id in range(TEST_START, TEST_END+1):
+                        partial_paths.append(os.path.join(path, 'segpcd_data', '{}.npy'.format(model_id)))
+                        complete_paths.append(os.path.join(path, 'gt_data', '{}.xyz'.format(model_id)))
         else:
             raise NotImplementedError
 

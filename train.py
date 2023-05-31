@@ -64,8 +64,12 @@ def train(params):
 
     log(log_fd, 'Loading Data...')
 
-    train_dataset = Oring('data/ORING', 'train', params.category) # JHBong
-    val_dataset = Oring('data/ORING', 'valid', params.category)
+    data_path = "/home/bong/.local/share/ov/pkg/isaac_sim-2022.2.1/standalone_examples/Oring_Data_Collection/Data/Oring_rotate_7DOF"
+    # train_dataset = Oring('data/ORING', 'train', params.category) # JHBong
+    # val_dataset = Oring('data/ORING', 'valid', params.category)
+    
+    train_dataset = Oring(data_path, 'train', params.category) # JHBong
+    val_dataset = Oring(data_path, 'valid', params.category)
     # train_dataset = ShapeNet('data/PCN', 'train', params.category)
     # val_dataset = ShapeNet('data/PCN', 'valid', params.category)
 
